@@ -1,0 +1,154 @@
+---
+title: "Akula-DATA607-Week01-Homework"
+author: "Pavan Akula"
+date: "February 6, 2017"
+output: html_document
+---
+
+Loading the data about mushrooms from website https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data
+
+```{r get-data-from-url, echo=TRUE}
+Mushrooms <- read.table("https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data",header = FALSE,sep=",")
+head(Mushrooms,10)
+```
+
+File can be loaded from local directory also.
+
+```{r get-data-from-local-dir, echo=TRUE}
+library(stringr)
+localdir <- getwd()
+destfile <- paste(str_trim(localdir),"//agaricus-lepiota.data",sep="")
+Mushrooms <- read.table(destfile,header = FALSE,sep=",")
+head(Mushrooms,10)
+```
+
+
+File contains 23 columns and 8124 rows. First column is categorical data showing mushroom catagory (e = edible and p = poisonous). Rest of 22 columns are attributes of mushrooms.
+
+```{r info-data, echo=TRUE}
+dim(Mushrooms)
+str(Mushrooms)
+```
+
+Downloading data dictionary located at https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.names
+
+```{r download-data-dic, echo=TRUE}
+library(stringr)
+localdir <- getwd()
+destfile <- paste(str_trim(localdir),"//agaricus-lepiota.txt",sep="")
+url <- "https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.names"
+download.file(url, destfile, mode="wb")
+```
+
+Changing the column name to meaning full names. Example V1 = class, V2 = cap-shape and so on. These columns names are derived from data dictionary
+
+```{r rename-cols, echo=TRUE}
+names(Mushrooms)[names(Mushrooms) == "V1"] <- "class"
+names(Mushrooms)[names(Mushrooms) == "V2"] <- "cap-shape"
+```
+
+```{r rename-cols-all, echo=TRUE}
+library(plyr)
+Mushrooms <- rename(Mushrooms,
+c("V3"="cap-surface", 
+"V4"="cap-color",  
+"V5"="bruises",  
+"V6"="odor",  
+"V7"="gill-attachment",  
+"V8"="gill-spacing",  
+"V9"="gill-size",  
+"V10"="gill-color",  
+"V11"="stalk-shape",  
+"V12"="stalk-root",  
+"V13"="stalk-surface-above-ring",  
+"V14"="stalk-surface-below-ring",  
+"V15"="stalk-color-above-ring",  
+"V16"="stalk-color-below-ring",  
+"V17"="veil-type",  
+"V18"="veil-color",  
+"V19"="ring-number",  
+"V20"="ring-type",  
+"V21"="spore-print-color",  
+"V22"="population",  
+"V23"="habitat"
+))
+head(Mushrooms,10)
+```
+
+List distinct values in class column.
+
+```{r unique-col-data1, echo=TRUE}
+unique(Mushrooms$class)
+```
+
+Formatting data, updated coded values to actual values. Example: in class column e = edible and p = poisonous. Since there are only 2 levels data can be formated using "elseif""
+
+```{r format-col-data1, echo=TRUE}
+unique(Mushrooms$class)
+Mushrooms$class <- ifelse(Mushrooms$class=="e","edible","poisonous")
+unique(Mushrooms$class)
+```
+
+Column cap-shape contain more then two levels. Formating cap-shape data.
+
+```{r format-col-data2, echo=TRUE}
+unique(Mushrooms$`cap-shape`)
+revalue(Mushrooms$`cap-shape`,c("b" = "bell")) -> Mushrooms$`cap-shape`
+revalue(Mushrooms$`cap-shape`,c("c" = "conical")) -> Mushrooms$`cap-shape`
+revalue(Mushrooms$`cap-shape`,c("x" = "convex")) -> Mushrooms$`cap-shape`
+revalue(Mushrooms$`cap-shape`,c("f" = "flat")) -> Mushrooms$`cap-shape`
+revalue(Mushrooms$`cap-shape`,c("k" = "knobbed")) -> Mushrooms$`cap-shape`
+revalue(Mushrooms$`cap-shape`,c("s" = "sunken")) -> Mushrooms$`cap-shape`
+unique(Mushrooms$`cap-shape`)
+```
+
+Formating cap-surface data.
+
+```{r format-col-data3, echo=TRUE}
+unique(Mushrooms$`cap-surface`)
+revalue(Mushrooms$`cap-surface`,c("s" = "smooth")) -> Mushrooms$`cap-surface`
+revalue(Mushrooms$`cap-surface`,c("y" = "scaly")) -> Mushrooms$`cap-surface`
+revalue(Mushrooms$`cap-surface`,c("f" = "fibrous")) -> Mushrooms$`cap-surface`
+revalue(Mushrooms$`cap-surface`,c("g" = "grooves")) -> Mushrooms$`cap-surface`
+unique(Mushrooms$`cap-surface`)
+```
+
+Formating cap-color data.
+
+```{r format-col-data4, echo=TRUE}
+unique(Mushrooms$`cap-color`)
+revalue(Mushrooms$`cap-color`,c("n" = "brown")) -> Mushrooms$`cap-color`
+revalue(Mushrooms$`cap-color`,c("b" = "buff")) -> Mushrooms$`cap-color`
+revalue(Mushrooms$`cap-color`,c("c" = "cinnamon")) -> Mushrooms$`cap-color`
+revalue(Mushrooms$`cap-color`,c("g" = "gray")) -> Mushrooms$`cap-color`
+revalue(Mushrooms$`cap-color`,c("r" = "green")) -> Mushrooms$`cap-color`
+revalue(Mushrooms$`cap-color`,c("p" = "pink")) -> Mushrooms$`cap-color`
+revalue(Mushrooms$`cap-color`,c("u" = "purple")) -> Mushrooms$`cap-color`
+revalue(Mushrooms$`cap-color`,c("e" = "red")) -> Mushrooms$`cap-color`
+revalue(Mushrooms$`cap-color`,c("w" = "white")) -> Mushrooms$`cap-color`
+revalue(Mushrooms$`cap-color`,c("y" = "yellow")) -> Mushrooms$`cap-color`
+unique(Mushrooms$`cap-color`)
+```
+
+Formating bruises data.
+
+```{r format-col-data5, echo=TRUE}
+unique(Mushrooms$`bruises`)
+revalue(Mushrooms$`bruises`,c("t" = "bruises")) -> Mushrooms$`bruises`
+revalue(Mushrooms$`bruises`,c("f" = "no")) -> Mushrooms$`bruises`
+unique(Mushrooms$`bruises`)
+```
+
+Subset data where class = edible. Selecting first 5 columns
+
+```{r subset-data1, echo=TRUE}
+edible <- Mushrooms[Mushrooms$class == "edible",1:5]
+head(edible,20)
+```
+
+Subset data where class = poisonous and bruises = no. Selecting columns based on names
+
+```{r subset-data2, echo=TRUE}
+poisonous <- subset(Mushrooms, Mushrooms$class == "poisonous" & Mushrooms$bruises == "no",select = c(class,`cap-color`,`cap-shape`,bruises))
+head(poisonous,20)
+```
